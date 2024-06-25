@@ -11,7 +11,7 @@ components:
       imageName: ""
       dockerfile:
         uri: catalog.Dockerfile
-        buildContext: "4.14"
+        buildContext: ""
   - name: kubernetes
     kubernetes:
       inlined: placeholder
