@@ -12,7 +12,7 @@ name: alpha
 package: orchestrator-operator
 schema: olm.channel
 ---
-image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:eb9e17e4b111da5013a363932067e93023dbd035cff6f1d47a5ca11fddab2546
+image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:cbc4e4961d6ebdbec02c16095b13b533d266451b5ed54194865dc7f82aaaca6f
 name: orchestrator-operator.v0.0.8
 package: orchestrator-operator
 properties:
@@ -46,7 +46,7 @@ properties:
 relatedImages:
 - image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.1
   name: ""
-- image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:eb9e17e4b111da5013a363932067e93023dbd035cff6f1d47a5ca11fddab2546
+- image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:cbc4e4961d6ebdbec02c16095b13b533d266451b5ed54194865dc7f82aaaca6f
   name: ""
 - image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-controller@sha256:9236c228d71183b3aac9d69a8c63906d7b32a6bcbcc3229c7e1245b813eaf792
   name: ""
