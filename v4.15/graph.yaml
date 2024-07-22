@@ -12,5 +12,5 @@ name: alpha
 package: orchestrator-operator
 schema: olm.channel
 ---
-image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:eb9e17e4b111da5013a363932067e93023dbd035cff6f1d47a5ca11fddab2546
+image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:cbc4e4961d6ebdbec02c16095b13b533d266451b5ed54194865dc7f82aaaca6f
 schema: olm.bundle
