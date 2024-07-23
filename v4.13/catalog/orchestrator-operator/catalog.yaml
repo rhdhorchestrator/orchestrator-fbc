@@ -48,6 +48,6 @@ relatedImages:
   name: ""
 - image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:1d6b8da8eb853664c692c9125159f8583671b53600fffa16f6475a4cf2ba5b99
   name: ""
-- image: quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-controller@sha256:c491b5022746aba741551aaa2c82ae911fa5656dfe8a766932f6db1166b4ed29
+- image: controller:latest
   name: ""
 schema: olm.bundle
