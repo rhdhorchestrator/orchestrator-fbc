@@ -241,11 +241,17 @@ spec:
               # Capture the controller' image name from the bundle's image using REGEX_LABEL_CONTROLLER
               skopeo inspect --format "{{ .Labels.controller }}" docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
         workingDir: $(workspaces.source.path)
-        when:
-        - input: $(tasks.init.results.build)
-          operator: in
-          values:
-          - "true"
+        workspaces:
+        - name: source
+          description: Workspace containing the source code to build.
+      when:
+      - input: $(tasks.init.results.build)
+        operator: in
+        values:
+        - "true"
+      workspaces:
+      - name: source
+        workspace: workspace
     - name: build-container
       params:
       - name: IMAGE
