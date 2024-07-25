@@ -227,9 +227,9 @@ spec:
               runAsUser: 65532
             script: |
               # Capture the bundle's image name from the container file using REGEX_LABEL_BUNDLE
-              bundle_image=$(grep "${REGEX_LABEL_BUNDLE}" ${CONTAINER_FILE} |awk -F"=" '{print $2}')
+              bundle_image=$(grep "$REGEX_LABEL_BUNDLE" $CONTAINER_FILE |awk -F"=" '{print $2}')
               # Capture the controller' image name from the bundle's image using REGEX_LABEL_CONTROLLER
-              skopeo inspect --format "{{ ${REGEX_LABEL_CONTROLLER} }}" docker://${bundle_image} | tee $(results.CONTROLLER_IMAGE.path)
+              skopeo inspect --format "{{ $REGEX_LABEL_CONTROLLER }}" docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
         workingDir: $(workspaces.source.path)
         when:
         - input: $(tasks.init.results.build)
