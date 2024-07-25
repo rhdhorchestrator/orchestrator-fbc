@@ -19,7 +19,7 @@ FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14
 ENTRYPOINT ["/bin/opm"]
 CMD ["serve", "/configs", "--cache-dir=/tmp/cache"]
 
-COPY --from=builder catalog/ /configs
+COPY --from=builder /tmp/catalog/ /configs
 RUN find /configs -type f -name "*.yaml" -exec cat {} +
 RUN ["/bin/opm", "serve", "/configs", "--cache-dir=/tmp/cache", "--cache-only"]
 
