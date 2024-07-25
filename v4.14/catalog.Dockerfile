@@ -6,6 +6,8 @@ FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14
 ARG BUNDLE=quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:df0eedcaf9ed8b7c9891934d2013e81acbd02759d7c70321f2e51f375735008d
 ARG CONTROLLER=controller:latest
 
+RUN echo CONTROLLER=$CONTROLLER
+RUN echo BUNDLE=$BUNDLE
 WORKDIR /tmp
 COPY . .
 USER 0
