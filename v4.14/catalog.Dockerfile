@@ -16,11 +16,11 @@ RUN find . -type f -name "*.yaml" -exec sed -i 's#controller:latest#'$CONTROLLER
 # Revert back to the bin user coming from the base image
 USER 20
 
-RUN find . -type f -name "*.yaml" -exec cat {} +
 ENTRYPOINT ["/bin/opm"]
 CMD ["serve", "/configs", "--cache-dir=/tmp/cache"]
 
 COPY catalog/ /configs
+RUN find /configs -type f -name "*.yaml" -exec cat {} +
 RUN ["/bin/opm", "serve", "/configs", "--cache-dir=/tmp/cache", "--cache-only"]
 
 # Core bundle labels.
