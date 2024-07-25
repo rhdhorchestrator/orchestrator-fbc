@@ -227,7 +227,7 @@ spec:
               runAsUser: 65532
             script: |
               # Capture the bundle's image name from the container file using REGEX_LABEL_BUNDLE
-              SOURCE_CODE_DIR=source
+              SOURCE_CODE_DIR=/workspace/source/source
 
               echo REGEX_LABEL_BUNDLE=$REGEX_LABEL_BUNDLE
               echo CONTAINER_FILE=$CONTAINER_FILE
@@ -240,7 +240,7 @@ spec:
               fi
               # Capture the controller' image name from the bundle's image using REGEX_LABEL_CONTROLLER
               skopeo inspect --format "{{ .Labels.controller }}" docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
-        workingDir: $(workspaces.source.path)
+            workingDir: $(workspaces.source.path)
         workspaces:
         - name: source
           description: Workspace containing the source code to build.
