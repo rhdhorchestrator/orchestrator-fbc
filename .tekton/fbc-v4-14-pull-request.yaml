@@ -181,13 +181,13 @@ spec:
       params:
       - name: CONTAINER_FILE
         description: Name of the file in the source directory that contains the reference to the container image location
-        value: ${params.CONTAINER_FILE}
+        value: catalog.Dockerfile
       - name: REGEX_LABEL_BUNDLE
         description: Regular expression in the CONTAINER_FILE where to find the reference to the bundle image name
-        value: ${params.REGEX_LABEL_BUNDLE}
+        value: ARG
       - name: REGEX_LABEL_CONTROLLER
         description: Regular expression in the Bundle's container image where to find the reference to the container image name
-        value: ${params.REGEX_LABEL_CONTROLLER}
+        value: LABEL controller
       taskSpec:
         params:
         - name: CONTAINER_FILE
@@ -227,7 +227,14 @@ spec:
               runAsUser: 65532
             script: |
               # Capture the bundle's image name from the container file using REGEX_LABEL_BUNDLE
+              echo REGEX_LABEL_BUNDLE=$REGEX_LABEL_BUNDLE
+              echo CONTAINER_FILE=CONTAINER_FILE
+              echo REGEX_LABEL_CONTROLLER=$REGEX_LABEL_CONTROLLER
               bundle_image=$(grep "$REGEX_LABEL_BUNDLE" $CONTAINER_FILE |awk -F"=" '{print $2}')
+              if [[ -z "$bundle_image" ]]; then
+                echo "No bundle image found in $CONTAINER_FILE using regular expression $REGEX_LABEL_BUNDLE"
+                exit 1
+              fi
               # Capture the controller' image name from the bundle's image using REGEX_LABEL_CONTROLLER
               skopeo inspect --format "{{ $REGEX_LABEL_CONTROLLER }}" docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
         workingDir: $(workspaces.source.path)
