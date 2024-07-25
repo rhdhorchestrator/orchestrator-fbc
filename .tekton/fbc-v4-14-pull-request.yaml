@@ -232,12 +232,12 @@ spec:
               echo REGEX_LABEL_BUNDLE=$REGEX_LABEL_BUNDLE
               echo CONTAINER_FILE=$CONTAINER_FILE
               echo REGEX_LABEL_CONTROLLER=$REGEX_LABEL_CONTROLLER
-              ls -laR
               bundle_image=$(grep "ARG" $SOURCE_CODE_DIR/v4.14/catalog.Dockerfile |awk -F"=" '{print $2}')
               if [[ -z "$bundle_image" ]]; then
                 echo "No bundle image found in catalog.Dockerfile using regular expression $REGEX_LABEL_BUNDLE"
                 exit 1
               fi
+              echo BUNDLE_IMAGE=$bundle_image
               # Capture the controller' image name from the bundle's image using REGEX_LABEL_CONTROLLER
               skopeo inspect --format "{{ .Labels.controller }}" docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
             workingDir: $(workspaces.source.path)
