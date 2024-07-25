@@ -232,7 +232,7 @@ spec:
               echo REGEX_LABEL_BUNDLE=$REGEX_LABEL_BUNDLE
               echo CONTAINER_FILE=$CONTAINER_FILE
               echo REGEX_LABEL_CONTROLLER=$REGEX_LABEL_CONTROLLER
-              bundle_image=$(grep "ARG" $SOURCE_CODE_DIR/v4.14/catalog.Dockerfile |awk -F"=" '{print $2}')
+              bundle_image=$(grep "ARG BUNDLE=" $SOURCE_CODE_DIR/v4.14/catalog.Dockerfile |awk -F"=" '{print $2}')
               if [[ -z "$bundle_image" ]]; then
                 echo "No bundle image found in catalog.Dockerfile using regular expression $REGEX_LABEL_BUNDLE"
                 exit 1
