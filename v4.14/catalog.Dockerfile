@@ -8,8 +8,8 @@ COPY . .
 USER 0
 # Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command only
 
-RUN echo \"$CONTROLLER\"
-	RUN set -ex ; find . -name "*.yaml" -exec sed -i 's#controller:latest#'$CONTROLLER'#' {} +
+RUN a=$(echo $CONTROLLER | xargs ) && echo -$a-
+RUN set -ex ; find . -name "*.yaml" -exec sed -i 's#controller:latest#'$CONTROLLER'#' {} +
 
 FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14
 
