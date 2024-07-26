@@ -268,7 +268,7 @@ spec:
         value: $(tasks.clone-repository.results.commit)
       - name: BUILD_ARGS
         value:
-        - "CONTROLLER"=$(tasks.extract-controller-image-name.CONTROLLER_IMAGE)
+        - "CONTROLLER=$(tasks.extract-controller-image-name.CONTROLLER_IMAGE)"
       runAfter:
       - extract-controller-image-name
       taskRef:
