@@ -211,14 +211,15 @@ spec:
             runAsUser: 65532
           env:
           - name: CONTROLLER_LABEL
-            value: $(params.controllerLabel)
+            value: $(params.CONTROLLER_LABEL)
           - name: CONTEXT
             value: $(params.CONTEXT)
           script: |
             set -x
-            SOURCE_CODE_DIR=source/$CONTEXT
+            SOURCE_CODE_DIR=source
+            echo $CONTEXT
 
-            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/graph.yaml)
+            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/v4.14/graph.yaml)
             if [[ -z "$bundle_image" ]]; then
               echo "No bundle image found in "$SOURCE_CODE_DIR/graph.yaml
               exit 1
