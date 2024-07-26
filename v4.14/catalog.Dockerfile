@@ -14,7 +14,7 @@ USER 0
 RUN <<EOF
 replace_manifest() {
 	sed -i "s#controller:latest#$CONTROLLER#" $1
-	sed -i -i "s#bundle:latest#$BUNDLE#" $1
+	sed -i "s#bundle:latest#$BUNDLE#" $1
 }
 export -f replace_manifest
 find . -name "*.yaml" -exec bash -c "replace_manifest \"{}\"" \;
