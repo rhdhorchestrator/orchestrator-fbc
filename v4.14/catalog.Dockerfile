@@ -6,16 +6,13 @@ FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14 as builder
 ARG BUNDLE=quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:df0eedcaf9ed8b7c9891934d2013e81acbd02759d7c70321f2e51f375735008d
 ARG CONTROLLER=controller:latest
 
-RUN export CONTROLLER=$CONTROLLER
-RUN export BUNDLE=$BUNDLE
 WORKDIR /tmp
 COPY . .
 USER 0
 # Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command only
 
-RUN find . -type f -name "*.yaml" -exec sed -i "s#controller:latest#$CONTROLLER#" -i "s#bundle:latest#$BUNDLE#" {} +
-# RUN find . -type f -name "*.yaml" -exec sed -i "s#controller:latest#$CONTROLLER#" {} +
-# RUN find . -type f -name "*.yaml" -exec sed -i "s#bundle:latest#$BUNDLE#" {} +
+RUN find . -type f -name "*.yaml" -exec sed -i "s#controller:latest#$CONTROLLER#" {} +
+RUN find . -type f -name "*.yaml" -exec sed -i "s#bundle:latest#$BUNDLE#" {} +
 
 FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14
 
