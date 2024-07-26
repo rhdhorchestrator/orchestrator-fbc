@@ -13,6 +13,8 @@ USER 0
 
 RUN <<EOF
 replace_manifest() {
+	echo '$CONTROLLER'
+	echo '$BUNDLE'
 	sed -i "s#controller:latest#$CONTROLLER#" $1
 	sed -i "s#bundle:latest#$BUNDLE#" $1
 }
