@@ -203,7 +203,7 @@ spec:
             value: ${params.regex-label-controller}
         steps:
           - name: skopeo-inspect
-            image: quay.io/skopeo/stable:v1
+            image: quay.io/konflux-ci/appstudio-utils@sha256:0fb4d1ee1f1526e85e00b4e41e72451d3fb9531ebf71291118be307c870633a0
             computeResources:
               limits:
                 memory: 512Mi
