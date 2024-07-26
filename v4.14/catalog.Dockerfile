@@ -12,8 +12,9 @@ WORKDIR /tmp
 COPY . .
 USER 0
 # Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command only
+RUN CONTROLLER=$(echo $CONTROLLER| xargs) echo find . -type f -name "*.yaml" -exec sed -i 's#controller:latest#'$CONTROLLER'#;s#bundle:latest#'$BUNDLE'#' {} +
 
-RUN CONTROLLER=$CONTROLLER BUNDLE=$BUNDLE find . -type f -name "*.yaml" -exec sed -i 's#controller:latest#'$CONTROLLER'#;s#bundle:latest#'$BUNDLE'#' {} +
+RUN CONTROLLER=$(echo $CONTROLLER| xargs) find . -type f -name "*.yaml" -exec sed -i 's#controller:latest#'$CONTROLLER'#;s#bundle:latest#'$BUNDLE'#' {} +
 #RUN find . -type f -name "*.yaml" -exec sed -i "s#controller:latest#$CONTROLLER#" {} +
 #RUN find . -type f -name "*.yaml" -exec sed -i "s#bundle:latest#$BUNDLE#" {} +
 
