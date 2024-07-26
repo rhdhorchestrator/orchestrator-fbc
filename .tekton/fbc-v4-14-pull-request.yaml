@@ -239,7 +239,7 @@ spec:
               fi
               echo BUNDLE_IMAGE=$bundle_image
               # Capture the controller' image name from the bundle's image using REGEX_LABEL_CONTROLLER
-              skopeo inspect --format "{{ .Labels.controller }}" docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
+              skopeo inspect --format "{{ .Labels.controller }}" docker://$bundle_image | xargs | tee $(results.CONTROLLER_IMAGE.path)
             workingDir: $(workspaces.source.path)
         workspaces:
         - name: source
