@@ -215,6 +215,7 @@ spec:
               runAsUser: 65532
             script: |
               # Capture the bundle's image name from the container file using REGEX_LABEL_BUNDLE
+              set -x
               SOURCE_CODE_DIR=source
 
               bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/v4.14/graph.yaml)
