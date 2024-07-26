@@ -13,7 +13,7 @@ COPY . .
 USER 0
 # Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command only
 
-RUN find . -type f -name "*.yaml" -exec sed -i 's#controller:latest#'$CONTROLLER'#' -i 's#bundle:latest#'$BUNDLE'#' {} +
+RUN find . -type f -name "*.yaml" -exec sed -i "s#controller:latest#$CONTROLLER#" -i "s#bundle:latest#$BUNDLE#" {} +
 # RUN find . -type f -name "*.yaml" -exec sed -i "s#controller:latest#$CONTROLLER#" {} +
 # RUN find . -type f -name "*.yaml" -exec sed -i "s#bundle:latest#$BUNDLE#" {} +
 
