@@ -218,7 +218,7 @@ spec:
           - name: CONTEXT
             value: $(params.CONTEXT)
           script: |
-            set -x
+            set -ex
             SOURCE_CODE_DIR=source/$CONTEXT
 
             bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/graph.yaml)
@@ -228,7 +228,7 @@ spec:
             fi
             echo BUNDLE_IMAGE=$bundle_image
             # Capture the controller' image name from the bundle's image defined as a label with key in CONTROLLER_LABEL
-            skopeo inspect --format '{{ index .Labels "'$CONTROLLER_LABEL'" }}' docker://$bundle_image | xargs | tee $(results.CONTROLLER_IMAGE.path)
+            skopeo inspect --format '{{ index .Labels "'$CONTROLLER_LABEL'" }}' docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
         workspaces:
         - name: source
           description: Workspace containing the source code to build.
@@ -256,7 +256,7 @@ spec:
         value: $(tasks.clone-repository.results.commit)
       - name: BUILD_ARGS
         value:
-        - "CONTROLLER=$(tasks.extract-controller-image-name.results.CONTROLLER_IMAGE)"
+        - CONTROLLER=\"$(tasks.extract-controller-image-name.results.CONTROLLER_IMAGE)\"
       runAfter:
       - extract-controller-image-name
       taskRef:
