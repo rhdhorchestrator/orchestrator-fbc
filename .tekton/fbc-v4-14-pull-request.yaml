@@ -177,15 +177,21 @@ spec:
         workspace: git-auth
     - name: extract-controller-image-name
       params:
-      - name: controller-label
+      - name: CONTROLLER_LABEL
         value: controller
+      - name: CONTEXT
+        value: $(params.path-context)
       runAfter:
       - clone-repository
       taskSpec:
         params:
-        - name: controller-label
+        - name: CONTROLLER_LABEL
           description: Label key defined in the bundle's container file that holds the controller's fully qualified image name
           default: controller
+          type: string
+        - name: CONTEXT
+          default: .
+          description: Path to the directory to use as context.
           type: string
         results:
         - name: CONTROLLER_IMAGE
@@ -205,14 +211,16 @@ spec:
             runAsUser: 65532
           env:
           - name: CONTROLLER_LABEL
-            value: ${params.controller-label}
+            value: $(params.controllerLabel)
+          - name: CONTEXT
+            value: $(params.CONTEXT)
           script: |
             set -x
-            SOURCE_CODE_DIR=source
+            SOURCE_CODE_DIR=source/$CONTEXT
 
-            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/v4.14/graph.yaml)
+            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/graph.yaml)
             if [[ -z "$bundle_image" ]]; then
-              echo "No bundle image found in "$SOURCE_CODE_DIR/v4.14/graph.yaml
+              echo "No bundle image found in "$SOURCE_CODE_DIR/graph.yaml
               exit 1
             fi
             echo BUNDLE_IMAGE=$bundle_image
