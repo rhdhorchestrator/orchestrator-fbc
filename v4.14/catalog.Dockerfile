@@ -3,7 +3,6 @@
 # The base image is expected to contain /bin/opm (with a serve subcommand) and /bin/grpc_health_probe
 FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14 as builder
 
-ARG BUNDLE=quay.io/redhat-user-workloads/orchestrator-releng-tenant/helm-operator/operator-bundle@sha256:df0eedcaf9ed8b7c9891934d2013e81acbd02759d7c70321f2e51f375735008d
 ARG CONTROLLER=controller:latest
 
 WORKDIR /tmp
@@ -11,16 +10,7 @@ COPY . .
 USER 0
 # Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command only
 
-RUN <<EOF
-replace_manifest() {
-	echo '$CONTROLLER'
-	echo '$BUNDLE'
-	sed -i "s#controller:latest#$CONTROLLER#" $1
-	sed -i "s#bundle:latest#$BUNDLE#" $1
-}
-export -f replace_manifest
-find . -name "*.yaml" -exec bash -c "replace_manifest \"{}\"" \;
-EOF
+RUN set -ex ; find . -name "*.yaml" -exec sed -i 's#controller:latest#'$CONTROLLER'#' {} +
 
 FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14
 
