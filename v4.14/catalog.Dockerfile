@@ -11,8 +11,14 @@ COPY . .
 USER 0
 # Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command only
 
-RUN find . -type f -name "*.yaml" -exec sed -i "s#controller:latest#$CONTROLLER#" {} +
-RUN find . -type f -name "*.yaml" -exec sed -i "s#bundle:latest#$BUNDLE#" {} +
+RUN <<EOF
+replace_manifest() {
+	sed -i "s#controller:latest#$CONTROLLER#" $1
+	sed -i -i "s#bundle:latest#$BUNDLE#" $1
+}
+export -f replace_manifest
+find . -name "*.yaml" -exec bash -c "replace_manifest \"{}\"" \;
+EOF
 
 FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14
 
