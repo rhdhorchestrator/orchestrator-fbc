@@ -184,6 +184,9 @@ spec:
       runAfter:
       - clone-repository
       taskSpec:
+        description: |-
+          This task retrieves the controller's fully qualified name from the bundle's image by introspecting the labels in the bundle for the
+          parametrized label that contains the controller's image.
         params:
         - name: CONTROLLER_LABEL
           description: Label key defined in the bundle's container file that holds the controller's fully qualified image name
@@ -216,10 +219,9 @@ spec:
             value: $(params.CONTEXT)
           script: |
             set -x
-            SOURCE_CODE_DIR=source
-            echo $CONTEXT
+            SOURCE_CODE_DIR=source/$CONTEXT
 
-            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/v4.14/graph.yaml)
+            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/graph.yaml)
             if [[ -z "$bundle_image" ]]; then
               echo "No bundle image found in "$SOURCE_CODE_DIR/graph.yaml
               exit 1
