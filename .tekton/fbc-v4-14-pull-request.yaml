@@ -176,50 +176,48 @@ spec:
       - name: basic-auth
         workspace: git-auth
     - name: extract-controller-image-name
+      params:
+      - name: controller-label
+        value: controller
       runAfter:
       - clone-repository
-      params:
-      - name: CONTROLLER_LABEL
-        description: Regular expression in the Bundle's container image where to find the reference to the container image name
-        value: controller
       taskSpec:
         params:
-        - name: CONTROLLER_LABEL
+        - name: controller-label
           description: Label key defined in the bundle's container file that holds the controller's fully qualified image name
           default: controller
           type: string
         results:
         - name: CONTROLLER_IMAGE
           description: Operator's controller's image name extracted from the label in the bundle image
-        stepsTemplate:
+        steps:
+        - name: skopeo-inspect
+          image: quay.io/konflux-ci/appstudio-utils@sha256:0fb4d1ee1f1526e85e00b4e41e72451d3fb9531ebf71291118be307c870633a0
+          workingDir: $(workspaces.source.path)
+          computeResources:
+            limits:
+              memory: 512Mi
+            requests:
+              memory: 256Mi
+              cpu: 250m
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
           env:
           - name: CONTROLLER_LABEL
-            value: ${params.CONTROLLER_LABEL}
-        steps:
-          - name: skopeo-inspect
-            image: quay.io/konflux-ci/appstudio-utils@sha256:0fb4d1ee1f1526e85e00b4e41e72451d3fb9531ebf71291118be307c870633a0
-            computeResources:
-              limits:
-                memory: 512Mi
-              requests:
-                memory: 256Mi
-                cpu: 250m
-            securityContext:
-              runAsNonRoot: true
-              runAsUser: 65532
-            script: |
-              set -x
-              SOURCE_CODE_DIR=source
+            value: ${params.controller-label}
+          script: |
+            set -x
+            SOURCE_CODE_DIR=source
 
-              bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/v4.14/graph.yaml)
-              if [[ -z "$bundle_image" ]]; then
-                echo "No bundle image found in "$SOURCE_CODE_DIR/v4.14/graph.yaml
-                exit 1
-              fi
-              echo BUNDLE_IMAGE=$bundle_image
-              # Capture the controller' image name from the bundle's image defined as a label with key in CONTROLLER_LABEL
-              skopeo inspect --format '{{ index .Labels "'$CONTROLLER_LABEL'" }}' docker://$bundle_image | xargs | tee $(results.CONTROLLER_IMAGE.path)
-            workingDir: $(workspaces.source.path)
+            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/v4.14/graph.yaml)
+            if [[ -z "$bundle_image" ]]; then
+              echo "No bundle image found in "$SOURCE_CODE_DIR/v4.14/graph.yaml
+              exit 1
+            fi
+            echo BUNDLE_IMAGE=$bundle_image
+            # Capture the controller' image name from the bundle's image defined as a label with key in CONTROLLER_LABEL
+            skopeo inspect --format '{{ index .Labels "'$CONTROLLER_LABEL'" }}' docker://$bundle_image | xargs | tee $(results.CONTROLLER_IMAGE.path)
         workspaces:
         - name: source
           description: Workspace containing the source code to build.
