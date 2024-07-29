@@ -226,10 +226,8 @@ spec:
               echo "No bundle image found in "$SOURCE_CODE_DIR/graph.yaml
               exit 1
             fi
-            echo BUNDLE_IMAGE=$bundle_image
             # Capture the controller' image name from the bundle's image defined as a label with key in CONTROLLER_LABEL
             skopeo inspect --format '{{ index .Labels "'$CONTROLLER_LABEL'" }}' docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
-            echo -$(cat $(results.CONTROLLER_IMAGE.path))-
         workspaces:
         - name: source
           description: Workspace containing the source code to build.

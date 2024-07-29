@@ -6,8 +6,9 @@ ARG CONTROLLER=controller:latest
 WORKDIR /tmp
 COPY . .
 USER 0
-# Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command only
-RUN set -ex ; find . -name "*.yaml" -exec sed -i 's#controller:latest#'$(echo $CONTROLLER | xargs )'#' {} +
+# Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command
+# Trim spaces in the $CONTROLLER argument to ensure the sed operation works.
+RUN find . -name "*.yaml" -exec sed -i 's#controller:latest#'$(echo $CONTROLLER | xargs )'#' {} +
 
 FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14
 
@@ -15,7 +16,7 @@ ENTRYPOINT ["/bin/opm"]
 CMD ["serve", "/configs", "--cache-dir=/tmp/cache"]
 
 COPY --from=builder /tmp/catalog/ /configs
-RUN find /configs -type f -name "*.yaml" -exec cat {} +
+
 RUN ["/bin/opm", "serve", "/configs", "--cache-dir=/tmp/cache", "--cache-only"]
 
 # Core bundle labels.
