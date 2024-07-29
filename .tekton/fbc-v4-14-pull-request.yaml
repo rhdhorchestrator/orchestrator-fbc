@@ -250,11 +250,11 @@ spec:
             value: $(params.CONTEXT)
           script: |
             set -ex
-            SOURCE_CODE_DIR=source/$CONTEXT
-
-            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/graph.yaml)
+            SOURCE_CODE_DIR=source
+            ls -laR
+            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/$CONTEXT/graph.yaml)
             if [[ -z "$bundle_image" ]]; then
-              echo "No bundle image found in "$SOURCE_CODE_DIR/graph.yaml
+              echo "No bundle image found in "$SOURCE_CODE_DIR/$CONTEXT/graph.yaml
               exit 1
             fi
             # Capture the controller' image name from the bundle's image defined as a label with key in CONTROLLER_LABEL
