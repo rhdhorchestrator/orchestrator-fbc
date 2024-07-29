@@ -65,9 +65,6 @@ spec:
         - name: kind
           value: task
         resolver: bundles
-      workspaces:
-      - name: workspace
-        workspace: workspace
     params:
     - description: Source Repository URL
       name: git-url
@@ -277,7 +274,7 @@ spec:
           script: |
             set -ex
             SOURCE_CODE_DIR=source
-            ls -laR
+
             bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/$CONTEXT/graph.yaml)
             if [[ -z "$bundle_image" ]]; then
               echo "No bundle image found in "$SOURCE_CODE_DIR/$CONTEXT/graph.yaml
@@ -293,9 +290,6 @@ spec:
         operator: in
         values:
         - "true"
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: build-container
       params:
       - name: IMAGE
@@ -317,10 +311,6 @@ spec:
       - name: BUILD_ARGS
         value:
         - CONTROLLER=$(tasks.extract-controller-image-name.results.CONTROLLER_IMAGE)
-      - name: ociStorage
-        value: $(params.output-image).git
-      - name: ociArtifactExpiresAfter
-        value: $(params.image-expires-after)
       runAfter:
       - extract-controller-image-name
       taskRef:
@@ -337,9 +327,6 @@ spec:
         operator: in
         values:
         - "true"
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: deprecated-base-image-check
       params:
       - name: IMAGE_URL
@@ -421,9 +408,6 @@ spec:
         operator: in
         values:
         - "false"
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: fbc-validate
       params:
       - name: IMAGE_URL
@@ -448,9 +432,6 @@ spec:
         operator: in
         values:
         - "false"
-      workspaces:
-      - name: workspace
-        workspace: workspace
     - name: fbc-related-image-check
       runAfter:
       - fbc-validate
@@ -468,26 +449,11 @@ spec:
         operator: in
         values:
         - "false"
-      workspaces:
-      - name: workspace
-        workspace: workspace
     workspaces:
-    - name: workspace
     - name: git-auth
       optional: true
   taskRunTemplate: {}
   workspaces:
-  - name: workspace
-    volumeClaimTemplate:
-      metadata:
-        creationTimestamp: null
-      spec:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-      status: {}
   - name: git-auth
     secret:
       secretName: '{{ git_auth_secret }}'
