@@ -405,6 +405,9 @@ spec:
         operator: in
         values:
         - "false"
+      workspaces:
+      - name: workspace
+        workspace: workspace
     - name: fbc-validate
       params:
       - name: IMAGE_URL
@@ -451,6 +454,8 @@ spec:
       optional: true
   taskRunTemplate: {}
   workspaces:
+  - name: workspace
+    emptyDir: {}
   - name: git-auth
     secret:
       secretName: '{{ git_auth_secret }}'
