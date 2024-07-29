@@ -212,8 +212,12 @@ spec:
         value: controller
       - name: CONTEXT
         value: $(params.path-context)
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
+      - name: CACHI2_ARTIFACT
+        value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
       runAfter:
-      - clone-repository
+      - prefetch-dependencies
       taskSpec:
         description: |-
           This task retrieves the controller's fully qualified name from the bundle's image by introspecting the labels in the bundle for the
@@ -227,13 +231,35 @@ spec:
           default: .
           description: Path to the directory to use as context.
           type: string
+        - name: SOURCE_ARTIFACT
+          description: The Trusted Artifact URI pointing to the artifact with
+            the application source code.
+          type: string
+        - name: CACHI2_ARTIFACT
+          description: The Trusted Artifact URI pointing to the artifact with
+            the prefetched dependencies.
+          type: string
+          default: ""
         results:
         - name: CONTROLLER_IMAGE
           description: Operator's controller's image name extracted from the label in the bundle image
+        volumes:
+        - name: workdir
+          emptyDir: {}
+        stepTemplate:
+          volumeMounts:
+          - mountPath: /var/workdir
+            name: workdir
         steps:
+        - name: use-trusted-artifact
+          image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:601e0999ae062e5ee666538d651af7893a75e415b7952c85caa8a4452501029a
+          args:
+            - use
+            - $(params.SOURCE_ARTIFACT)=/var/workdir/source
+            - $(params.CACHI2_ARTIFACT)=/var/workdir/cachi2
         - name: skopeo-inspect
           image: quay.io/konflux-ci/appstudio-utils@sha256:0fb4d1ee1f1526e85e00b4e41e72451d3fb9531ebf71291118be307c870633a0
-          workingDir: $(workspaces.source.path)
+          workingDir: /var/workdir
           computeResources:
             limits:
               memory: 512Mi
@@ -250,11 +276,11 @@ spec:
             value: $(params.CONTEXT)
           script: |
             set -ex
-            SOURCE_CODE_DIR=source/$CONTEXT
-
-            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/graph.yaml)
+            SOURCE_CODE_DIR=source
+            ls -laR
+            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/$CONTEXT/graph.yaml)
             if [[ -z "$bundle_image" ]]; then
-              echo "No bundle image found in "$SOURCE_CODE_DIR/graph.yaml
+              echo "No bundle image found in "$SOURCE_CODE_DIR/$CONTEXT/graph.yaml
               exit 1
             fi
             # Capture the controller' image name from the bundle's image defined as a label with key in CONTROLLER_LABEL
