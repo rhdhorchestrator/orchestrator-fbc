@@ -65,6 +65,9 @@ spec:
         - name: kind
           value: task
         resolver: bundles
+      workspaces:
+      - name: workspace
+        workspace: workspace
     params:
     - description: Source Repository URL
       name: git-url
@@ -178,31 +181,6 @@ spec:
       workspaces:
       - name: basic-auth
         workspace: git-auth
-    - name: prefetch-dependencies
-      taskRef:
-        resolver: bundles
-        params:
-        - name: name
-          value: prefetch-dependencies-oci-ta
-        - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies-oci-ta:0.1@sha256:1e4787ce13ca515a70312c27e304ed6a1d3e63840863f4c841f2f1687d7df45f
-        - name: kind
-          value: task
-      runAfter:
-      - clone-repository
-      params:
-      - name: input
-        value: "$(params.prefetch-input)"
-      - name: hermetic
-        value: "$(params.hermetic)"
-      - name: dev-package-managers
-        value: $(params.prefetch-dev-package-managers-enabled)
-      - name: SOURCE_ARTIFACT
-        value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
-      - name: ociStorage
-        value: $(params.output-image).prefetch
-      - name: ociArtifactExpiresAfter
-        value: $(params.image-expires-after)
     - name: extract-controller-image-name
       params:
       - name: CONTROLLER_LABEL
@@ -211,10 +189,8 @@ spec:
         value: $(params.path-context)
       - name: SOURCE_ARTIFACT
         value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
-      - name: CACHI2_ARTIFACT
-        value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
       runAfter:
-      - prefetch-dependencies
+      - clone-repository
       taskSpec:
         description: |-
           This task retrieves the controller's fully qualified name from the bundle's image by introspecting the labels in the bundle for the
@@ -231,10 +207,6 @@ spec:
         - name: SOURCE_ARTIFACT
           description: The Trusted Artifact URI pointing to the artifact with
             the application source code.
-          type: string
-        - name: CACHI2_ARTIFACT
-          description: The Trusted Artifact URI pointing to the artifact with
-            the prefetched dependencies.
           type: string
           default: ""
         results:
@@ -253,7 +225,6 @@ spec:
           args:
             - use
             - $(params.SOURCE_ARTIFACT)=/var/workdir/source
-            - $(params.CACHI2_ARTIFACT)=/var/workdir/cachi2
         - name: skopeo-inspect
           image: quay.io/konflux-ci/appstudio-utils@sha256:0fb4d1ee1f1526e85e00b4e41e72451d3fb9531ebf71291118be307c870633a0
           workingDir: /var/workdir
@@ -302,9 +273,7 @@ spec:
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
       - name: SOURCE_ARTIFACT
-        value: $(tasks.prefetch-dependencies.results.SOURCE_ARTIFACT)
-      - name: CACHI2_ARTIFACT
-        value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
+        value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
       - name: BUILD_ARGS
         value:
         - CONTROLLER=$(tasks.extract-controller-image-name.results.CONTROLLER_IMAGE)
@@ -406,7 +375,7 @@ spec:
         values:
         - "false"
       workspaces:
-      - name: workspace
+      - name: source
         workspace: workspace
     - name: fbc-validate
       params:
@@ -432,6 +401,9 @@ spec:
         operator: in
         values:
         - "false"
+      workspaces:
+      - name: workspace
+        workspace: workspace
     - name: fbc-related-image-check
       runAfter:
       - fbc-validate
@@ -449,7 +421,11 @@ spec:
         operator: in
         values:
         - "false"
+      workspaces:
+      - name: workspace
+        workspace: workspace
     workspaces:
+    - name: workspace
     - name: git-auth
       optional: true
   taskRunTemplate: {}
