@@ -154,12 +154,16 @@ spec:
         value: $(params.git-url)
       - name: revision
         value: $(params.revision)
+      - name: ociStorage
+        value: "$(params.output-image).git"
+      - name: ociArtifactExpiresAfter
+        value: "$(params.image-expires-after)"
       runAfter:
       - init
       taskRef:
         params:
         - name: name
-          value: git-clone-oci-ta-oci-ta
+          value: git-clone-oci-ta
         - name: bundle
           value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1@sha256:b44ea49656037376056e62cb39d4ed73e5215814556be832f2a425eec31204ab
         - name: kind
