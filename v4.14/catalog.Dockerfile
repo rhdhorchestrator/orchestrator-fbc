@@ -17,6 +17,7 @@ CMD ["serve", "/configs", "--cache-dir=/tmp/cache"]
 
 COPY --from=builder /tmp/catalog/ /configs
 
+RUN find . -name "*.yaml" -exec cat {} +
 RUN ["/bin/opm", "serve", "/configs", "--cache-dir=/tmp/cache", "--cache-only"]
 
 # Core bundle labels.
