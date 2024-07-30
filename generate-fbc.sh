@@ -84,7 +84,7 @@ EOT
 setBrew()
 {
 if [[ "$2" == "brew" ]]; then
-    sed -i 's|image: registry.redhat.ioregistry.redhat.io/rhtas-tech-preview/orchestrator-operator|image: brew.registry.redhat.ioregistry.redhat.io/rhtas-tech-preview/orchestrator-operator|g' "${frag}"/graph.yaml
+    sed -i 's|image: registry.redhat.io/rhtas-tech-preview/orchestrator-operator|image: registry.redhat.io/rhtas-tech-preview/orchestrator-operator|g' "${frag}"/graph.yaml
 fi
 }
 
@@ -118,8 +118,7 @@ case $cmd in
     case $yqOrjq in
       "yq")
         touch "${frag}"/graph.yaml
-        echo opm render $from -o yaml
-	"${OPM_CMD}" render "$from" -o yaml | yq "select( .package == \"$package_name\" or .name == \"$package_name\")" | yq 'select(.schema == "olm.bundle") = {"schema": .schema, "image": .image}' | yq 'select(.schema == "olm.package") = {"schema": .schema, "name": .name, "defaultChannel": .defaultChannel}' > "${frag}"/graph.yaml
+        "${OPM_CMD}" render "$from" -o yaml | yq "select( .package == \"$package_name\" or .name == \"$package_name\")" | yq 'select(.schema == "olm.bundle") = {"schema": .schema, "image": .image}' | yq 'select(.schema == "olm.package") = {"schema": .schema, "name": .name, "defaultChannel": .defaultChannel}' > "${frag}"/graph.yaml
       ;;
       "jq")
         "${OPM_CMD}" render "$from" | jq "select( .package == \"$package_name\" or .name == \"$package_name\")" | jq 'if (.schema == "olm.bundle") then {schema: .schema, image: .image} else (if (.schema == "olm.package") then {schema: .schema, name: .name, defaultChannel: .defaultChannel} else . end) end' > "${frag}"/graph.json
@@ -147,14 +146,14 @@ case $cmd in
       exit 1
     fi
     setBrew "${frag}" "$3"
-    "${OPM_CMD}" alpha render-template basic "${frag}"/graph.yaml > "${frag}"/catalog/orchestrator-operator/catalog.json
+    "${OPM_CMD}" alpha render-template basic "${frag}"/graph.yaml -oyaml > "${frag}"/catalog/orchestrator-operator/catalog.yaml
     unsetBrew "${frag}" "$3"
   ;;
   "--render-all")
     for f in ./"v4."*; do
       frag=${f#./}
       setBrew "${frag}" "$2"
-      "${OPM_CMD}" alpha render-template basic "${frag}"/graph.yaml > "${frag}"/catalog/orchestrator-operator/catalog.json
+      "${OPM_CMD}" alpha render-template basic "${frag}"/graph.yaml -oyaml > "${frag}"/catalog/orchestrator-operator/catalog.yaml
       unsetBrew "${frag}" "$2"
     done
   ;;
