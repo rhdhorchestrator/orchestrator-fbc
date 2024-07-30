@@ -3,9 +3,9 @@ FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14 as builder
 
 ARG CONTROLLER=controller:latest
 
-WORKDIR /tmp
+WORKDIR /tmp/fbc
 COPY . .
-RUN ls -laR /tmp
+RUN ls -laR /tmp/fbc
 USER 0
 # Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command
 # Trim spaces in the $CONTROLLER argument to ensure the sed operation works.
@@ -16,9 +16,9 @@ FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14
 ENTRYPOINT ["/bin/opm"]
 CMD ["serve", "/configs", "--cache-dir=/tmp/cache"]
 
-COPY --from=builder /tmp/catalog/ /configs
+COPY --from=builder /tmp/fbc/catalog/ /configs
 
-RUN find . -name "*.yaml" -exec cat {} +
+RUN ls -laR /configs; find /configs -name "*.yaml" -exec cat {} +
 RUN ["/bin/opm", "serve", "/configs", "--cache-dir=/tmp/cache", "--cache-only"]
 
 # Core bundle labels.
