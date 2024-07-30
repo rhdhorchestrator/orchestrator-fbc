@@ -4,8 +4,8 @@ FROM registry.redhat.io/openshift4/ose-operator-registry:v4.14 as builder
 ARG CONTROLLER=controller:latest
 
 WORKDIR /tmp
-RUN ls -laR /
 COPY . .
+RUN ls -laR /tmp
 USER 0
 # Need to be able to update the files with sed and they're mounted as owned by root, so we become root for this sed command
 # Trim spaces in the $CONTROLLER argument to ensure the sed operation works.
