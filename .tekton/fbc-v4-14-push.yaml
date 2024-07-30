@@ -9,6 +9,7 @@ metadata:
     pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
       == "main" && ( "v4.14/***".pathChanged() || ".tekton/fbc-v4-14-pull-request.yaml".pathChanged()
       )
+    pipelinesascode.tekton.dev/task: "[.tekton/task-extract-controller-image-name.yaml]"
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: fbc-v4-14
@@ -178,95 +179,23 @@ spec:
       workspaces:
       - name: basic-auth
         workspace: git-auth
-    - name: prefetch-dependencies
-      taskRef:
-        resolver: bundles
-        params:
-        - name: name
-          value: prefetch-dependencies-oci-ta
-        - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-prefetch-dependencies-oci-ta:0.1@sha256:1e4787ce13ca515a70312c27e304ed6a1d3e63840863f4c841f2f1687d7df45f
-        - name: kind
-          value: task
-      runAfter:
-      - clone-repository
-      params:
-      - name: input
-        value: "$(params.prefetch-input)"
-      - name: hermetic
-        value: "$(params.hermetic)"
-      - name: dev-package-managers
-        value: $(params.prefetch-dev-package-managers-enabled)
-      - name: SOURCE_ARTIFACT
-        value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
-      - name: ociStorage
-        value: $(params.output-image).prefetch
-      - name: ociArtifactExpiresAfter
-        value: $(params.image-expires-after)
     - name: extract-controller-image-name
       params:
       - name: CONTROLLER_LABEL
         value: controller
       - name: CONTEXT
         value: $(params.path-context)
+      - name: SOURCE_ARTIFACT
+        value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
       runAfter:
       - clone-repository
-      taskSpec:
-        description: |-
-          This task retrieves the controller's fully qualified name from the bundle's image by introspecting the labels in the bundle for the
-          parametrized label that contains the controller's image.
-        params:
-        - name: CONTROLLER_LABEL
-          description: Label key defined in the bundle's container file that holds the controller's fully qualified image name
-          default: controller
-          type: string
-        - name: CONTEXT
-          default: .
-          description: Path to the directory to use as context.
-          type: string
-        results:
-        - name: CONTROLLER_IMAGE
-          description: Operator's controller's image name extracted from the label in the bundle image
-        steps:
-        - name: skopeo-inspect
-          image: quay.io/konflux-ci/appstudio-utils@sha256:0fb4d1ee1f1526e85e00b4e41e72451d3fb9531ebf71291118be307c870633a0
-          workingDir: $(workspaces.source.path)
-          computeResources:
-            limits:
-              memory: 512Mi
-            requests:
-              memory: 256Mi
-              cpu: 250m
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 65532
-          env:
-          - name: CONTROLLER_LABEL
-            value: $(params.CONTROLLER_LABEL)
-          - name: CONTEXT
-            value: $(params.CONTEXT)
-          script: |
-            set -ex
-            SOURCE_CODE_DIR=source/$CONTEXT
-
-            bundle_image=$(yq e '.image |select (.)' $SOURCE_CODE_DIR/graph.yaml)
-            if [[ -z "$bundle_image" ]]; then
-              echo "No bundle image found in "$SOURCE_CODE_DIR/graph.yaml
-              exit 1
-            fi
-            # Capture the controller' image name from the bundle's image defined as a label with key in CONTROLLER_LABEL
-            skopeo inspect --format '{{ index .Labels "'$CONTROLLER_LABEL'" }}' docker://$bundle_image | tee $(results.CONTROLLER_IMAGE.path)
-        workspaces:
-        - name: source
-          description: Workspace containing the source code to build.
+      taskRef:
+        name: extract-controller-image-name
       when:
       - input: $(tasks.init.results.build)
         operator: in
         values:
         - "true"
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: build-container
       params:
       - name: IMAGE
@@ -282,16 +211,10 @@ spec:
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
       - name: SOURCE_ARTIFACT
-        value: $(tasks.prefetch-dependencies.results.SOURCE_ARTIFACT)
-      - name: CACHI2_ARTIFACT
-        value: $(tasks.prefetch-dependencies.results.CACHI2_ARTIFACT)
+        value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
       - name: BUILD_ARGS
         value:
         - CONTROLLER=$(tasks.extract-controller-image-name.results.CONTROLLER_IMAGE)
-      - name: ociStorage
-        value: $(params.output-image).git
-      - name: ociArtifactExpiresAfter
-        value: $(params.image-expires-after)
       runAfter:
       - extract-controller-image-name
       taskRef:
@@ -308,9 +231,6 @@ spec:
         operator: in
         values:
         - "true"
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: deprecated-base-image-check
       params:
       - name: IMAGE_URL
@@ -449,16 +369,7 @@ spec:
   taskRunTemplate: {}
   workspaces:
   - name: workspace
-    volumeClaimTemplate:
-      metadata:
-        creationTimestamp: null
-      spec:
-        accessModes:
-        - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-      status: {}
+    emptyDir: {}
   - name: git-auth
     secret:
       secretName: '{{ git_auth_secret }}'
