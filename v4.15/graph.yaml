@@ -12,5 +12,5 @@ name: alpha
 package: orchestrator-operator
 schema: olm.channel
 ---
-image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:e8196126d48692ab2f451ad5ef8033ffc14c89fd9b139615fe5a8a75166b1405
+image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:e8196126d48692ab2f451ad5ef8033ffc14c89fd9b139615fe5a8a75166b1405
 schema: olm.bundle
