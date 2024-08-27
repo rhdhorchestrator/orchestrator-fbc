@@ -5,7 +5,7 @@ FROM registry.redhat.io/openshift4/ose-operator-registry-rhel9:v4.15
 ENTRYPOINT ["/bin/opm"]
 CMD ["serve", "/configs", "--cache-dir=/tmp/cache"]
 
-ADD catalog/ /configs
+ADD catalog /configs
 RUN ["/bin/opm", "serve", "/configs", "--cache-dir=/tmp/cache", "--cache-only"]
 
 # Core bundle labels.
