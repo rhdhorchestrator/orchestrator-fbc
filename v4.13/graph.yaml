@@ -24,6 +24,6 @@ image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operat
 schema: olm.bundle
 # orchestrator-helm-operator v.1.2.1
 ---
-image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:2fdeb766a08ffe7d485107b39fca48dc585da86c7df214fdf9f73996b78aa49a
+image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:2fdeb766a08ffe7d485107b39fca48dc585da86c7df214fdf9f73996b78aa49a
 schema: olm.bundle
 # orchestrator-helm-operator v.1.2.3
