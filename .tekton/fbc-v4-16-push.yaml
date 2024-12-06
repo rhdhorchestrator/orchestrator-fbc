@@ -7,7 +7,7 @@ metadata:
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "main"
+      == "main"&& ( "v4.16/***".pathChanged() || ".tekton/fbc-v4-16-pull-request.yaml".pathChanged()
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: fbc-v4-16
@@ -26,7 +26,7 @@ spec:
   - name: dockerfile
     value: catalog.Dockerfile
   - name: path-context
-    value: v4.15
+    value: v4.16
   pipelineSpec:
     finally:
     - name: show-sbom
