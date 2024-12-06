@@ -14,6 +14,7 @@ entries:
   replaces: orchestrator-operator.v1.2.1
 - name: orchestrator-operator.v1.3.0
   replaces: orchestrator-operator.v1.2.3
+  skipRange: '>=1.2.3 <1.3.0'
 name: stable-1.3
 package: orchestrator-operator
 schema: olm.channel
@@ -30,6 +31,6 @@ image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-
 schema: olm.bundle
 # orchestrator-helm-operator v.1.2.3
 ---
-image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:5132cde7778b28aef1ed12c30b91ec1ac7470b745f23408bffa519ea1d32291a
+image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:9244383fa5bb252f385fbb2967633214383a35d7626dbcade9f9f0001cee8d38
 schema: olm.bundle
-# orchestrator-helm-operator v.1.2.3
+# orchestrator-helm-operator v.1.3.0
