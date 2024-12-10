@@ -12,6 +12,6 @@ name: stable
 package: orchestrator-operator
 schema: olm.channel
 ---
-image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:3a21aaa0adc66ddaf313c5db4d269933c67bdb378d75a8cacfc1104ae0c98e81
+image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:3a21aaa0adc66ddaf313c5db4d269933c67bdb378d75a8cacfc1104ae0c98e81
 schema: olm.bundle
 # orchestrator-helm-operator v.1.3.0
