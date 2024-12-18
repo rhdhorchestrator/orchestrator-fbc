@@ -6,6 +6,10 @@ SKOPEO_CMD=${SKOPEO_CMD:-skopeo}
 OPM_CMD=${OPM_CMD:-opm}
 AUTH_FILE=${AUTH_FILE:-}
 
+# shellcheck source=opm_utils.sh
+source opm_utils.sh
+download_opm_client
+
 package_name="orchestrator-operator"
 
 helpFunction()
@@ -20,38 +24,7 @@ helpFunction()
   exit 1
 }
 
-devfile()
-{
-    cat <<EOT > "$1"/devfile.yaml
-schemaVersion: 2.2.0
-metadata:
-  name: fbc-$1
-  displayName: FBC $1
-  description: 'File based catalog'
-  language: fbc
-  provider: Red Hat
-components:
-  - name: image-build
-    image:
-      imageName: ""
-      dockerfile:
-        uri: catalog.Dockerfile
-        buildContext: ""
-  - name: kubernetes
-    kubernetes:
-      inlined: placeholder
-    attributes:
-      deployment/container-port: 50051
-      deployment/cpuRequest: "100m"
-      deployment/memoryRequest: 512Mi
-      deployment/replicas: 1
-      deployment/storageRequest: "0"
-commands:
-  - id: build-image
-    apply:
-      component: image-build
-EOT
-}
+
 
 dockerfile()
 {
@@ -118,17 +91,21 @@ case $cmd in
     case $yqOrjq in
       "yq")
         touch "${frag}"/graph.yaml
-        "${OPM_CMD}" render "$from" -o yaml | yq "select( .package == \"$package_name\" or .name == \"$package_name\")" | yq 'select(.schema == "olm.bundle") = {"schema": .schema, "image": .image}' | yq 'select(.schema == "olm.package") = {"schema": .schema, "name": .name, "defaultChannel": .defaultChannel}' > "${frag}"/graph.yaml
-      ;;
+# shellcheck disable=SC2086
+	      ./opm render $(opm_alpha_params "${frag}") "$from" -o yaml | yq "select( .package == \"$package_name\" or .name == \"$package_name\")" | \
+                                                             	                                                        yq 'select(.schema == "olm.bundle") = {"schema": .schema, "image": .image}' | \
+                                                             	                                                        yq 'select(.schema == "olm.package") = {"schema": .schema, "name": .name, "defaultChannel": .defaultChannel}' | \
+                                                             	                                                        yq '[.]' | \
+                                                             	                                                        yq '{"schema": "olm.template.basic", "name": "orchestrator-operator", "entries":.}' | \
+                                                             	                                                        sed 's|^  #|    #|g' > "${frag}/graph.yaml"      ;;
       "jq")
-        "${OPM_CMD}" render "$from" | jq "select( .package == \"$package_name\" or .name == \"$package_name\")" | jq 'if (.schema == "olm.bundle") then {schema: .schema, image: .image} else (if (.schema == "olm.package") then {schema: .schema, name: .name, defaultChannel: .defaultChannel} else . end) end' > "${frag}"/graph.json
+        ./opm render $(opm_alpha_params "${frag}") "$from" | jq "select( .package == \"$package_name\" or .name == \"$package_name\")" | jq 'if (.schema == "olm.bundle") then {schema: .schema, image: .image} else (if (.schema == "olm.package") then {schema: .schema, name: .name, defaultChannel: .defaultChannel} else . end) end' > "${frag}"/graph.json
       ;;
       *)
         echo "please specify if yq or jq"
         exit 1
       ;;
     esac
-    devfile "$frag"
     dockerfile "$frag"
   ;;
   "--init-basic-all")
@@ -146,14 +123,14 @@ case $cmd in
       exit 1
     fi
     setBrew "${frag}" "$3"
-    "${OPM_CMD}" alpha render-template basic "${frag}"/graph.yaml -oyaml > "${frag}"/catalog/orchestrator-operator/catalog.yaml
+    ./opm alpha render-template basic $(opm_alpha_params "${frag}") "${frag}"/graph.yaml -oyaml > "${frag}"/catalog/orchestrator-operator/catalog.yaml
     unsetBrew "${frag}" "$3"
   ;;
   "--render-all")
     for f in ./"v4."*; do
       frag=${f#./}
       setBrew "${frag}" "$2"
-      "${OPM_CMD}" alpha render-template basic "${frag}"/graph.yaml -oyaml > "${frag}"/catalog/orchestrator-operator/catalog.yaml
+      ./opm alpha render-template basic $(opm_alpha_params "${frag}") "${frag}"/graph.yaml -oyaml > "${frag}"/catalog/orchestrator-operator/catalog.yaml
       unsetBrew "${frag}" "$2"
     done
   ;;
@@ -164,34 +141,26 @@ case $cmd in
       echo "Please specify OCP minor, eg: v4.12"
       exit 1
     fi
-    setBrew "${frag}" "$3"
     sed -i "/# orchestrator-bundle-registry v4\./d" "$frag"/graph.yaml
-    grep -E "^image: [brew\.]*registry.redhat.io/rhtas-tech-preview/orchestrator-operator[-rhel9]*@sha256" "$frag"/graph.yaml | while read -r line ; do
+    grep -E "^\s\s\s\simage: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256" "$frag"/graph.yaml | while read -r line ; do
       image=${line/image: /}
       echo "Processing $image"
       # shellcheck disable=SC2086
-      url=$(${SKOPEO_CMD} inspect --no-tags ${AUTH_FILE} docker://"$image" | grep "\"url\": ")
-      tag1=${url/*\/images\/}
-      tag=${tag1/\",/}
-      sed -i "s|$image|$image\n# hco-bundle-registry $tag|g" "$frag"/graph.yaml
+      release=$(${SKOPEO_CMD} inspect --format "{{.Labels.release}}" --no-tags ${AUTH_FILE} docker://"$image")
+      sed -i -E "s|^( *)(image: )$image|\1\2$image\n\1# orchestrator-bundle-registry $release|" "$frag"/graph.yaml
     done
-    unsetBrew "${frag}" "$3"
   ;;
   "--comment-graph-all")
     for f in ./"v4."*; do
       frag=${f#./}
-      setBrew "${frag}" "$2"
-      sed -i "/# hco-bundle-registry v4\./d" "$frag"/graph.yaml
-      grep -E "^image: [brew\.]*registry.redhat.io/rhtas-tech-preview/orchestrator-operator[-rhel9]*@sha256" "$frag"/graph.yaml | while read -r line ; do
+      sed -i "/# orchestrator-bundle-registry v4\./d" "$frag"/graph.yaml
+      grep -E "^\s\s\s\simage: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256" "$frag"/graph.yaml | while read -r line ; do
         image=${line/image: /}
         echo "Processing $image"
-	# shellcheck disable=SC2086
-        url=$(${SKOPEO_CMD} inspect --no-tags ${AUTH_FILE} docker://"$image" | grep "\"url\": ")
-        tag1=${url/*\/images\/}
-        tag=${tag1/\",/}
-        sed -i "s|$image|$image\n# orchestrator-bundle-registry $tag|g" "$frag"/graph.yaml
+        # shellcheck disable=SC2086
+        release=$(${SKOPEO_CMD} inspect --format "{{.Labels.release}}" --no-tags ${AUTH_FILE} docker://"$image")
+        sed -i -E "s|^( *)(image: )$image|\1\2$image\n\1# orchestrator-bundle-registry $release|" "$frag"/graph.yaml
       done
-      unsetBrew "${frag}" "$2"
     done
   ;;
   *)
