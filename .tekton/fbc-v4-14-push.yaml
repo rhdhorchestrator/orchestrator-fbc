@@ -22,7 +22,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/orchestrator-releng-tenant/fbc-v4-14/fbc-v4-14:{{revision}}
+    value: quay.io/redhat-user-workloads/orchestrator-releng-tenant/fbc-v4-14:{{revision}}
   - name: dockerfile
     value: catalog.Dockerfile
   - name: path-context
