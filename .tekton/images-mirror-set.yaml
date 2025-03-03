@@ -6,5 +6,5 @@ metadata:
 spec:
   imageDigestMirrors:
     - mirrors:
-        - quay.io/redhat-user-workloads/orchestrator-releng-tenant/orchestrator-operator-bundle@sha256:c24af5d0aa25b237838198903d31dd4585e4841bf9345e661e5638064580ccc2
-      source: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:c24af5d0aa25b237838198903d31dd4585e4841bf9345e661e5638064580ccc2
+        - quay.io/redhat-user-workloads/orchestrator-releng-tenant/orchestrator-operator-bundle
+      source: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle
