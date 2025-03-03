@@ -5,15 +5,10 @@ entries:
     name: orchestrator-operator
     defaultChannel: stable
   - entries:
-      - name: orchestrator-operator.v1.3.0
-      - name: orchestrator-operator.v1.3.1
-        replaces: orchestrator-operator.v1.3.0
+      - name: orchestrator-operator.v1.4.0
     name: stable
     package: orchestrator-operator
     schema: olm.channel
   - schema: olm.bundle
-    image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:3a21aaa0adc66ddaf313c5db4d269933c67bdb378d75a8cacfc1104ae0c98e81
-    # orchestrator-bundle-registry 1.3.0
-  - schema: olm.bundle
-    image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:b91ba67284137e31f2b1bd481247da301c543785e02308358cfe680d813b4793
-    # orchestrator-bundle-registry 1.3.1
+    image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:c24af5d0aa25b237838198903d31dd4585e4841bf9345e661e5638064580ccc2
+    # orchestrator-bundle-registry 1.4.0
