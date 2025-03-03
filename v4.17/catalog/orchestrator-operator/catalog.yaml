@@ -9,7 +9,7 @@ name: stable
 package: orchestrator-operator
 schema: olm.channel
 ---
-image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:c24af5d0aa25b237838198903d31dd4585e4841bf9345e661e5638064580ccc2
+image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:e2d430161048239611b874a10376e7889d3cdd6f0368419e4bfba2d2c18dafd5
 name: orchestrator-operator.v1.4.0
 package: orchestrator-operator
 properties:
@@ -122,13 +122,13 @@ properties:
                 "npmRegistry": "https://npm.registry.redhat.com",
                 "orchestrator": {
                   "integrity": "sha512-2yasbfBZ3iKntArIfK+hk9tvv4b/dy9+WKXOcWIotqkI1gv+Nhvy+m55KAUWi2vmfM0rj3EoG6YP+3Zajn1KyA==",
-                  "package": "backstage-plugin-orchestrator-1.4.0.tgz"
+                  "package": "backstage-plugin-orchestrator@1.4.0"
                 },
                 "orchestratorBackend": {
                   "integrity": "sha512-2aOHDLFrGMAtyHFiyGZwVBZ9Op+TmKYUwfZxwoaGJ1s6JSy/0qgqineEEE0K3dn/f17XBUj+H1dwa5Al598Ugw==",
-                  "package": "backstage-plugin-orchestrator-backend-dynamic-1.4.0.tgz"
+                  "package": "backstage-plugin-orchestrator-backend-dynamic@1.4.0"
                 },
-                "scope": "https://github.com/rhdhorchestrator/orchestrator-plugins-internal-release/releases/download/1.4.0"
+                "scope": "@redhat"
               },
               "serverlessOperator": {
                 "enabled": true,
@@ -162,7 +162,7 @@ properties:
       capabilities: Basic Install
       categories: Developer Tools
       console.openshift.io/disable-operand-delete: "true"
-      createdAt: "2025-02-27T20:43:39Z"
+      createdAt: "2025-03-03T21:25:17Z"
       features.operators.openshift.io/cnf: "false"
       features.operators.openshift.io/cni: "false"
       features.operators.openshift.io/csi: "false"
@@ -232,8 +232,8 @@ properties:
 relatedImages:
 - image: registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:29201e85bd41642b72c7c0ce915e40aad90823d0efc3e7bbab9c351c92c74341
   name: ""
-- image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/controller-rhel9-operator@sha256:1e5476c5fba29672465631dcf4b3f7309b5cf2de2e1bb2c4f644e220aa9c7c5e
+- image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/controller-rhel9-operator@sha256:22a6e6a593a3e92ac3951405832708f04237d32937209e378a25d54e6b69e512
   name: ""
-- image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:c24af5d0aa25b237838198903d31dd4585e4841bf9345e661e5638064580ccc2
+- image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:e2d430161048239611b874a10376e7889d3cdd6f0368419e4bfba2d2c18dafd5
   name: ""
 schema: olm.bundle
