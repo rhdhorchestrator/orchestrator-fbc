@@ -10,5 +10,5 @@ entries:
     package: orchestrator-operator
     schema: olm.channel
   - schema: olm.bundle
-    image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:e2d430161048239611b874a10376e7889d3cdd6f0368419e4bfba2d2c18dafd5
+    image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:e2d430161048239611b874a10376e7889d3cdd6f0368419e4bfba2d2c18dafd5
     # orchestrator-bundle-registry 1.4.0
