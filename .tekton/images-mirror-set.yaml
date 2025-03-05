@@ -8,3 +8,6 @@ spec:
     - mirrors:
         - quay.io/redhat-user-workloads/orchestrator-releng-tenant/orchestrator-operator-bundle
       source: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle
+    - mirrors:
+        - quay.io/redhat-user-workloads/orchestrator-releng-tenant/orchestrator-operator-bundle
+      source: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle
