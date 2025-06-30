@@ -308,7 +308,7 @@ relatedImages:
   name: ""
 schema: olm.bundle
 ---
-image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:266366306f3977ae74e1ce3d06856a709d888163bf7423b6b941adfeb8ded6c2
+image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:266366306f3977ae74e1ce3d06856a709d888163bf7423b6b941adfeb8ded6c2
 name: orchestrator-operator.v1.6.0
 package: orchestrator-operator
 properties:
@@ -451,6 +451,6 @@ properties:
 relatedImages:
 - image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/controller-rhel9-operator@sha256:32e556fe067074d1f0ef0eb1f5483f62cc63d31a04c5fb2dcaea657a6471c081
   name: ""
-- image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:266366306f3977ae74e1ce3d06856a709d888163bf7423b6b941adfeb8ded6c2
+- image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:266366306f3977ae74e1ce3d06856a709d888163bf7423b6b941adfeb8ded6c2
   name: ""
 schema: olm.bundle
