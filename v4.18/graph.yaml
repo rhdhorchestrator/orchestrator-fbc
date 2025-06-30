@@ -21,5 +21,5 @@ entries:
     image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:82b8d33feb13b8a22f6158d3a8c03bb0edb4be8b70cfa13d9218fd6bfb80dbc8
     # orchestrator-bundle-registry 1.5.1
   - schema: olm.bundle
-    image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:266366306f3977ae74e1ce3d06856a709d888163bf7423b6b941adfeb8ded6c2
+    image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:266366306f3977ae74e1ce3d06856a709d888163bf7423b6b941adfeb8ded6c2
     # orchestrator-bundle-registry 1.6.0
