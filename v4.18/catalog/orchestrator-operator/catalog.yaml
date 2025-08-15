@@ -12,6 +12,8 @@ entries:
 - name: orchestrator-operator.v1.6.0
   replaces: orchestrator-operator.v1.5.2
   skipRange: '>=1.5.2 <1.6.0'
+- name: orchestrator-operator.v1.6.1
+  replaces: orchestrator-operator.v1.6.0
 name: stable
 package: orchestrator-operator
 schema: olm.channel
@@ -601,5 +603,152 @@ relatedImages:
 - image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/controller-rhel9-operator@sha256:32e556fe067074d1f0ef0eb1f5483f62cc63d31a04c5fb2dcaea657a6471c081
   name: ""
 - image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:266366306f3977ae74e1ce3d06856a709d888163bf7423b6b941adfeb8ded6c2
+  name: ""
+schema: olm.bundle
+---
+image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:b82fd43d2dad2e525464177081869c923e239dcb09319458162f33a96370a6e6
+name: orchestrator-operator.v1.6.1
+package: orchestrator-operator
+properties:
+- type: olm.gvk
+  value:
+    group: rhdh.redhat.com
+    kind: Orchestrator
+    version: v1alpha3
+- type: olm.package
+  value:
+    packageName: orchestrator-operator
+    version: 1.6.1
+- type: olm.csv.metadata
+  value:
+    annotations:
+      alm-examples: |-
+        [
+          {
+            "apiVersion": "rhdh.redhat.com/v1alpha3",
+            "kind": "Orchestrator",
+            "metadata": {
+              "labels": {
+                "app.kubernetes.io/name": "orchestrator-sample"
+              },
+              "name": "orchestrator-sample"
+            },
+            "spec": {
+              "argocd": {
+                "enabled": false,
+                "namespace": "orchestrator-gitops"
+              },
+              "platform": {
+                "eventing": {
+                  "broker": {}
+                },
+                "monitoring": {
+                  "enabled": false
+                },
+                "namespace": "sonataflow-infra",
+                "resources": {
+                  "limits": {
+                    "cpu": "500m",
+                    "memory": "1Gi"
+                  },
+                  "requests": {
+                    "cpu": "250m",
+                    "memory": "64Mi"
+                  }
+                }
+              },
+              "postgres": {
+                "authSecret": {
+                  "name": "sonataflow-psql-postgresql",
+                  "passwordKey": "postgres-password",
+                  "userKey": "postgres-username"
+                },
+                "database": "sonataflow",
+                "name": "sonataflow-psql-postgresql",
+                "namespace": "sonataflow-infra"
+              },
+              "rhdh": {
+                "devMode": true,
+                "installOperator": true,
+                "name": "my-rhdh",
+                "namespace": "rhdh",
+                "plugins": {
+                  "notificationsEmail": {
+                    "enabled": false,
+                    "port": 587,
+                    "replyTo": "",
+                    "sender": ""
+                  }
+                }
+              },
+              "serverless": {
+                "installOperator": true
+              },
+              "serverlessLogic": {
+                "installOperator": true
+              },
+              "tekton": {
+                "enabled": false
+              }
+            }
+          }
+        ]
+      capabilities: Basic Install
+      createdAt: "2025-08-15T00:51:04Z"
+      features.operators.openshift.io/cnf: "false"
+      features.operators.openshift.io/cni: "false"
+      features.operators.openshift.io/csi: "false"
+      features.operators.openshift.io/disconnected: "false"
+      features.operators.openshift.io/fips-compliant: "false"
+      features.operators.openshift.io/proxy-aware: "false"
+      features.operators.openshift.io/tls-profiles: "false"
+      features.operators.openshift.io/token-auth-aws: "false"
+      features.operators.openshift.io/token-auth-azure: "false"
+      features.operators.openshift.io/token-auth-gcp: "false"
+      operators.openshift.io/valid-subscription: '["Red Hat Developer Hub"]'
+      operators.operatorframework.io/builder: operator-sdk-v1.38.0
+      operators.operatorframework.io/project_layout: go.kubebuilder.io/v4
+      repository: https://github.com/rhdhorchestrator/orchestrator-go-operator
+    apiServiceDefinitions: {}
+    crdDescriptions:
+      owned:
+      - kind: Orchestrator
+        name: orchestrators.rhdh.redhat.com
+        version: v1alpha3
+    description: |
+      Red Hat Developer Hub Orchestrator is a plugin that enables serverless asynchronous workflows to Backstage.
+
+      ## More Information
+
+      * [Red Hat Developer Hub Product Page](https://www.redhat.com/en/technologies/cloud-computing/developer-hub)
+      * [Product Documentation](https://rhdhorchestrator.io)  displayName: Orchestrator Operator
+    displayName: Orchestrator Operator
+    installModes:
+    - supported: false
+      type: OwnNamespace
+    - supported: false
+      type: SingleNamespace
+    - supported: false
+      type: MultiNamespace
+    - supported: true
+      type: AllNamespaces
+    keywords:
+    - Orchestrator
+    - RHDH
+    links:
+    - name: Orchestrator Operator
+      url: https://github.com/rhdhorchestrator/orchestrator-go-operator
+    maintainers:
+    - email: jubah@redhat.com
+      name: Red Hat
+    maturity: alpha
+    minKubeVersion: 1.26.0
+    provider:
+      name: Red Hat
+      url: https://www.redhat.com
+relatedImages:
+- image: registry.redhat.io/rhdh-orchestrator-dev-preview-beta/controller-rhel9-operator@sha256:9f5423829ac55faf2395e2d0d3683b238339dc03285696e1b350c5c5a1c4df3a
+  name: ""
+- image: registry.stage.redhat.io/rhdh-orchestrator-dev-preview-beta/orchestrator-operator-bundle@sha256:b82fd43d2dad2e525464177081869c923e239dcb09319458162f33a96370a6e6
   name: ""
 schema: olm.bundle
